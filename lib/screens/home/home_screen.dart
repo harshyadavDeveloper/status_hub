@@ -20,10 +20,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _messageIndex = 0;
+  final List<String> _messages = [
+    "Pick a vibe, share it 🔥",
+    "Express your mood 💭",
+    "Create stunning status ✨",
+    "Make your story stand out 🚀",
+  ];
   @override
   void initState() {
     super.initState();
     Future.microtask(() => context.read<TemplateProvider>().loadTrending());
+    _startMessageRotation();
+  }
+
+  void _startMessageRotation() {
+    Future.delayed(const Duration(seconds: 5), () {
+      if (!mounted) return;
+
+      setState(() {
+        _messageIndex = (_messageIndex + 1) % _messages.length;
+      });
+
+      _startMessageRotation(); // loop
+    });
   }
 
   @override
@@ -37,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildHeader(context),
             _buildLanguageFilter(),
             _buildCategoryFilter(),
-            _buildFestivalBanner(), 
+            _buildFestivalBanner(),
             _buildTrendingSection(),
             _buildGrid(),
           ],
@@ -63,11 +83,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: AppColors.textPrimary,
                 ),
               ),
-              Text(
-                'Pick a vibe, share it 🔥',
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (child, animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0, 0.5),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  );
+                },
+                child: Text(
+                  _messages[_messageIndex],
+                  key: ValueKey(_messages[_messageIndex]), // VERY IMPORTANT
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
             ],
