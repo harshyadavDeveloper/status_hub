@@ -16,7 +16,7 @@ class FavoritesScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        elevation: 0, 
+        elevation: 0,
         title: Text(
           'Favourites',
           style: GoogleFonts.poppins(

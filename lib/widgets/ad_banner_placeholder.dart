@@ -18,8 +18,11 @@ class AdBannerPlaceholder extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.campaign_outlined,
-                size: 18, color: Colors.grey.shade500),
+            Icon(
+              Icons.campaign_outlined,
+              size: 18,
+              color: Colors.grey.shade500,
+            ),
             const SizedBox(width: 6),
             Text(
               "Advertisement",

@@ -130,7 +130,7 @@ class _CreateScreenState extends State<CreateScreen> {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
-      
+
       title: Text(
         'Create Status',
         style: GoogleFonts.poppins(

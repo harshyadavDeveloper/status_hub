@@ -35,22 +35,22 @@ class TemplateModel {
   }
 
   Map<String, dynamic> toMap() => {
-        'id': id,
-        'text': text,
-        'gradientColors': gradientColors,
-        'fontFamily': fontFamily,
-        'category': category,
-        'language': language,
-        'isFavorite': isFavorite,
-      };
+    'id': id,
+    'text': text,
+    'gradientColors': gradientColors,
+    'fontFamily': fontFamily,
+    'category': category,
+    'language': language,
+    'isFavorite': isFavorite,
+  };
 
   factory TemplateModel.fromMap(Map<String, dynamic> map) => TemplateModel(
-        id: map['id'],
-        text: map['text'],
-        gradientColors: List<String>.from(map['gradientColors']),
-        fontFamily: map['fontFamily'],
-        category: map['category'],
-        language: map['language'],
-        isFavorite: map['isFavorite'] ?? false,
-      );
+    id: map['id'],
+    text: map['text'],
+    gradientColors: List<String>.from(map['gradientColors']),
+    fontFamily: map['fontFamily'],
+    category: map['category'],
+    language: map['language'],
+    isFavorite: map['isFavorite'] ?? false,
+  );
 }

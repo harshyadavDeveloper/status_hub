@@ -72,8 +72,12 @@ class TemplateCard extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    template.isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: template.isFavorite ? AppColors.accent : Colors.white,
+                    template.isFavorite
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: template.isFavorite
+                        ? AppColors.accent
+                        : Colors.white,
                     size: 16,
                   ),
                 ),

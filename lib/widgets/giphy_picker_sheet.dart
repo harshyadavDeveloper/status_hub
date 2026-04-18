@@ -28,14 +28,25 @@ class _GiphyPickerSheetState extends State<GiphyPickerSheet> {
   Future<void> _loadTrending() async {
     setState(() => _isLoading = true);
     final stickers = await GiphyService.fetchTrending();
-    if (mounted) setState(() { _stickers = stickers; _isLoading = false; });
+    if (mounted)
+      setState(() {
+        _stickers = stickers;
+        _isLoading = false;
+      });
   }
 
   Future<void> _search(String query) async {
-    if (query.trim().isEmpty) { _loadTrending(); return; }
+    if (query.trim().isEmpty) {
+      _loadTrending();
+      return;
+    }
     setState(() => _isSearching = true);
     final stickers = await GiphyService.searchStickers(query);
-    if (mounted) setState(() { _stickers = stickers; _isSearching = false; });
+    if (mounted)
+      setState(() {
+        _stickers = stickers;
+        _isSearching = false;
+      });
   }
 
   @override
@@ -65,67 +76,79 @@ class _GiphyPickerSheetState extends State<GiphyPickerSheet> {
   }
 
   Widget _buildHandle() => Container(
-        margin: const EdgeInsets.only(top: 12),
-        width: 36,
-        height: 4,
-        decoration: BoxDecoration(
-          color: AppColors.textHint,
-          borderRadius: BorderRadius.circular(2),
-        ),
-      );
+    margin: const EdgeInsets.only(top: 12),
+    width: 36,
+    height: 4,
+    decoration: BoxDecoration(
+      color: AppColors.textHint,
+      borderRadius: BorderRadius.circular(2),
+    ),
+  );
 
   Widget _buildHeader() => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Add Sticker',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close, color: AppColors.textSecondary),
-            ),
-          ],
-        ),
-      );
-
-  Widget _buildSearchBar() => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: TextField(
-          controller: _searchController,
-          onSubmitted: _search,
-          onChanged: (v) { if (v.isEmpty) _loadTrending(); },
-          style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary),
-          decoration: InputDecoration(
-            hintText: 'Search stickers...',
-            hintStyle: GoogleFonts.poppins(color: AppColors.textHint, fontSize: 13),
-            prefixIcon: const Icon(Icons.search, color: AppColors.textHint, size: 20),
-            suffixIcon: _isSearching
-                ? const Padding(
-                    padding: EdgeInsets.all(12),
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
-                    ),
-                  )
-                : null,
-            filled: true,
-            fillColor: AppColors.surfaceGrey,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Add Sticker',
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
           ),
         ),
-      );
+        IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.close, color: AppColors.textSecondary),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildSearchBar() => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    child: TextField(
+      controller: _searchController,
+      onSubmitted: _search,
+      onChanged: (v) {
+        if (v.isEmpty) _loadTrending();
+      },
+      style: GoogleFonts.poppins(fontSize: 13, color: AppColors.textPrimary),
+      decoration: InputDecoration(
+        hintText: 'Search stickers...',
+        hintStyle: GoogleFonts.poppins(color: AppColors.textHint, fontSize: 13),
+        prefixIcon: const Icon(
+          Icons.search,
+          color: AppColors.textHint,
+          size: 20,
+        ),
+        suffixIcon: _isSearching
+            ? const Padding(
+                padding: EdgeInsets.all(12),
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary,
+                  ),
+                ),
+              )
+            : null,
+        filled: true,
+        fillColor: AppColors.surfaceGrey,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+      ),
+    ),
+  );
 
   Widget _buildGrid() {
     if (_isLoading) {
@@ -200,13 +223,10 @@ class _GiphyPickerSheetState extends State<GiphyPickerSheet> {
   }
 
   Widget _buildGiphyBadge() => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Text(
-          'Powered by GIPHY',
-          style: GoogleFonts.poppins(
-            fontSize: 11,
-            color: AppColors.textHint,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 12),
+    child: Text(
+      'Powered by GIPHY',
+      style: GoogleFonts.poppins(fontSize: 11, color: AppColors.textHint),
+    ),
+  );
 }

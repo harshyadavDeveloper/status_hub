@@ -52,7 +52,10 @@ class GiphyService {
     }
   }
 
-  static Future<List<GiphySticker>> searchStickers(String query, {int limit = 24}) async {
+  static Future<List<GiphySticker>> searchStickers(
+    String query, {
+    int limit = 24,
+  }) async {
     try {
       final uri = Uri.parse(
         '${AppStrings.giphyBaseUrl}/stickers/search'

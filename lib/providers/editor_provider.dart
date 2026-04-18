@@ -34,33 +34,35 @@ class EditorProvider extends ChangeNotifier {
   List<Offset> get stickerOffsets => _stickerOffsets;
 
   void addSticker(GiphySticker sticker, Size canvasSize) {
-  _stickers.add(sticker);
-  _stickerOffsets.add(Offset(canvasSize.width / 2 - 40, canvasSize.height / 2 - 40));
-  notifyListeners();
-}
-
-void updateStickerOffset(int index, Offset offset) {
-  if (index < _stickerOffsets.length) {
-    _stickerOffsets[index] = offset;
+    _stickers.add(sticker);
+    _stickerOffsets.add(
+      Offset(canvasSize.width / 2 - 40, canvasSize.height / 2 - 40),
+    );
     notifyListeners();
   }
-}
 
-void removeSticker(int index) {
-  if (index < _stickers.length) {
-    _stickers.removeAt(index);
-    _stickerOffsets.removeAt(index);
+  void updateStickerOffset(int index, Offset offset) {
+    if (index < _stickerOffsets.length) {
+      _stickerOffsets[index] = offset;
+      notifyListeners();
+    }
+  }
+
+  void removeSticker(int index) {
+    if (index < _stickers.length) {
+      _stickers.removeAt(index);
+      _stickerOffsets.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  // Add to reset():
+  void reset() {
+    if (_currentTemplate != null) loadTemplate(_currentTemplate!);
+    _stickers = [];
+    _stickerOffsets = [];
     notifyListeners();
   }
-}
-
-// Add to reset():
-void reset() {
-  if (_currentTemplate != null) loadTemplate(_currentTemplate!);
-  _stickers = [];
-  _stickerOffsets = [];
-  notifyListeners();
-}
 
   void loadTemplate(TemplateModel template) {
     _currentTemplate = template;
@@ -118,6 +120,4 @@ void reset() {
     _isItalic = !_isItalic;
     notifyListeners();
   }
-
-
 }

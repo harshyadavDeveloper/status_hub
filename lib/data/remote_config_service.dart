@@ -28,10 +28,12 @@ class RemoteConfigService {
       FirebaseRemoteConfig.instance;
 
   static Future<void> initialize() async {
-    await _remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(seconds: 10),
-      minimumFetchInterval: const Duration(hours: 1),
-    ));
+    await _remoteConfig.setConfigSettings(
+      RemoteConfigSettings(
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: const Duration(hours: 1),
+      ),
+    );
 
     await _remoteConfig.setDefaults({
       'trending_templates': jsonEncode({
@@ -48,10 +50,10 @@ class RemoteConfigService {
                 'category': 'Motivational',
                 'language': 'English',
                 'isFavorite': false,
-              }
-            ]
-          }
-        ]
+              },
+            ],
+          },
+        ],
       }),
     });
 

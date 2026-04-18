@@ -21,7 +21,8 @@ class FestivalBanner extends StatelessWidget {
         // Next up — hero banner
         _buildHeroBanner(context, upcoming.first),
         // More upcoming — horizontal strip
-        if (upcoming.length > 1) _buildUpcomingStrip(context, upcoming.skip(1).toList()),
+        if (upcoming.length > 1)
+          _buildUpcomingStrip(context, upcoming.skip(1).toList()),
         const SizedBox(height: 4),
       ],
     );
@@ -36,10 +37,7 @@ class FestivalBanner extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           gradient: LinearGradient(
-            colors: [
-              event.color,
-              event.color.withOpacity(0.7),
-            ],
+            colors: [event.color, event.color.withOpacity(0.7)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -57,10 +55,7 @@ class FestivalBanner extends StatelessWidget {
             Positioned(
               right: -10,
               top: -10,
-              child: Text(
-                event.emoji,
-                style: const TextStyle(fontSize: 80),
-              ),
+              child: Text(event.emoji, style: const TextStyle(fontSize: 80)),
             ),
             // Content
             Padding(
@@ -75,7 +70,9 @@ class FestivalBanner extends StatelessWidget {
                         // Badge
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.25),
                             borderRadius: BorderRadius.circular(20),
@@ -84,8 +81,8 @@ class FestivalBanner extends StatelessWidget {
                             event.isToday
                                 ? '🎉 Today!'
                                 : event.daysUntil == 1
-                                    ? '⏰ Tomorrow!'
-                                    : '📅 In ${event.daysUntil} days',
+                                ? '⏰ Tomorrow!'
+                                : '📅 In ${event.daysUntil} days',
                             style: GoogleFonts.poppins(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
@@ -108,7 +105,9 @@ class FestivalBanner extends StatelessWidget {
                   // CTA button
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -131,8 +130,7 @@ class FestivalBanner extends StatelessWidget {
     );
   }
 
-  Widget _buildUpcomingStrip(
-      BuildContext context, List<FestivalEvent> events) {
+  Widget _buildUpcomingStrip(BuildContext context, List<FestivalEvent> events) {
     return SizedBox(
       height: 72,
       child: ListView.builder(
@@ -158,8 +156,7 @@ class FestivalBanner extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(event.emoji,
-                      style: const TextStyle(fontSize: 22)),
+                  Text(event.emoji, style: const TextStyle(fontSize: 22)),
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,8 +174,8 @@ class FestivalBanner extends StatelessWidget {
                         event.isToday
                             ? 'Today! 🎉'
                             : event.daysUntil == 1
-                                ? 'Tomorrow!'
-                                : 'In ${event.daysUntil} days',
+                            ? 'Tomorrow!'
+                            : 'In ${event.daysUntil} days',
                         style: GoogleFonts.poppins(
                           fontSize: 10,
                           color: event.color,
@@ -196,21 +193,16 @@ class FestivalBanner extends StatelessWidget {
     );
   }
 
-  void _openFestivalTemplates(
-      BuildContext context, FestivalEvent event) {
+  void _openFestivalTemplates(BuildContext context, FestivalEvent event) {
     final provider = context.read<TemplateProvider>();
 
     // Find matching trending section
     final sections = provider.trendingSections;
-    final match = sections.where(
-      (s) => s.id == event.trendingSectionId,
-    );
+    final match = sections.where((s) => s.id == event.trendingSectionId);
 
     if (match.isNotEmpty && match.first.templates.isNotEmpty) {
       // Open first template directly in editor
-      context
-          .read<EditorProvider>()
-          .loadTemplate(match.first.templates.first);
+      context.read<EditorProvider>().loadTemplate(match.first.templates.first);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const EditorScreen()),
