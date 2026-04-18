@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:status_hub/screens/editor/create_screen.dart';
 import 'package:status_hub/screens/favorites/favorites_screen.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/dummy_templates.dart';
@@ -28,7 +27,7 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      floatingActionButton: _buildFAB(context),
+      // floatingActionButton: _buildFAB(context),
     );
   }
 
@@ -238,26 +237,6 @@ class HomeScreen extends StatelessWidget {
             },
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildFAB(BuildContext context) {
-    return FloatingActionButton.extended(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const CreateScreen()),
-        );
-      },
-      backgroundColor: AppColors.primary,
-      icon: const Icon(Icons.add, color: Colors.white),
-      label: Text(
-        'Create',
-        style: GoogleFonts.poppins(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-        ),
       ),
     );
   }
