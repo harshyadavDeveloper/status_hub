@@ -52,17 +52,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(context),
-            _buildLanguageFilter(),
-            const AdBannerPlaceholder(),
-            _buildCategoryFilter(),
-            _buildFestivalBanner(),
-            _buildTrendingSection(),
-            _buildGrid(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              _buildLanguageFilter(),
+              const AdBannerPlaceholder(),
+              _buildCategoryFilter(),
+              _buildFestivalBanner(),
+              _buildTrendingSection(),
+              _buildGrid(), // now part of scroll
+            ],
+          ),
         ),
       ),
     );
@@ -377,12 +379,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildGrid() {
-    return Expanded(
-      child: Consumer<TemplateProvider>(
-        builder: (context, provider, _) {
-          final templates = provider.filteredTemplates;
-          if (templates.isEmpty) {
-            return Center(
+    return Consumer<TemplateProvider>(
+      builder: (context, provider, _) {
+        final templates = provider.filteredTemplates;
+        if (templates.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.all(40),
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -398,34 +401,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-            );
-          }
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.85,
             ),
-            itemCount: templates.length,
-            itemBuilder: (context, index) {
-              final template = templates[index];
-              return TemplateCard(
-                template: template,
-                onFavorite: () => provider.toggleFavorite(template.id),
-                onTap: () {
-                  context.read<EditorProvider>().loadTemplate(template);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const EditorScreen()),
-                  );
-                },
-              );
-            },
           );
-        },
-      ),
+        }
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            childAspectRatio: 0.85,
+          ),
+          itemCount: templates.length,
+          itemBuilder: (context, index) {
+            final template = templates[index];
+            return TemplateCard(
+              template: template,
+              onFavorite: () => provider.toggleFavorite(template.id),
+              onTap: () {
+                context.read<EditorProvider>().loadTemplate(template);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EditorScreen()),
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 
