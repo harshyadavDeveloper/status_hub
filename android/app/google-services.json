@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1026582687377",
+    "project_id": "status-hub-8bfd5",
+    "storage_bucket": "status-hub-8bfd5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026582687377:android:bfe579a53a8a37813a5930",
+        "android_client_info": {
+          "package_name": "com.example.status_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD16_UnPe_7VyWn4dF7q22T7U4vI0wkFAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

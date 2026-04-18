@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:status_hub/data/remote_config_service.dart';
 import 'providers/template_provider.dart';
 import 'providers/editor_provider.dart';
 import 'core/constants/app_colors.dart';
@@ -8,7 +10,15 @@ import 'screens/home/home_screen.dart';
 import 'screens/favorites/favorites_screen.dart';
 import 'screens/editor/create_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+ try {
+    await Firebase.initializeApp();
+    print("✅ Firebase Connected");
+  } catch (e) {
+    print("❌ Firebase Error: $e");
+  }
+  await RemoteConfigService.initialize();
   runApp(const MyApp());
 }
 
@@ -51,16 +61,13 @@ class _MainShellState extends State<MainShell> {
     CreateScreen(),
   ];
   void switchTab(int index) {
-  setState(() => _currentIndex = index);
-}
+    setState(() => _currentIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: _buildBottomNav(),
     );
   }
@@ -128,8 +135,7 @@ class _MainShellState extends State<MainShell> {
               label,
               style: GoogleFonts.poppins(
                 fontSize: 11,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected ? AppColors.primary : AppColors.textHint,
               ),
             ),
