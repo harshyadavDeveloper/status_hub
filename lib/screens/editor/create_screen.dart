@@ -1,41 +1,45 @@
+import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saver_gallery/saver_gallery.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import 'package:share_plus/share_plus.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_fonts.dart';
-import '../../providers/editor_provider.dart';
-import 'dart:ui' as ui;
 
-class EditorScreen extends StatefulWidget {
-  const EditorScreen({super.key});
+class CreateScreen extends StatefulWidget {
+  const CreateScreen({super.key});
 
   @override
-  State<EditorScreen> createState() => _EditorScreenState();
+  State<CreateScreen> createState() => _CreateScreenState();
 }
 
-class _EditorScreenState extends State<EditorScreen> {
+class _CreateScreenState extends State<CreateScreen> {
   final GlobalKey _canvasKey = GlobalKey();
-  late TextEditingController _textController;
+  final TextEditingController _textController = TextEditingController(
+    text: 'Your vibe here ✨',
+  );
+
+  String _selectedFont = 'Poppins';
+  double _fontSize = 24.0;
+  Color _textColor = Colors.white;
+  TextAlign _textAlign = TextAlign.center;
+  bool _isBold = false;
+  bool _isItalic = false;
   bool _isSaving = false;
+  List<Color> _gradientColors = AppColors.purpleGradient;
 
-  @override
-  void initState() {
-    super.initState();
-    final provider = context.read<EditorProvider>();
-    _textController = TextEditingController(text: provider.editedText);
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
+  final List<Color> _textColors = [
+    Colors.white,
+    Colors.black,
+    const Color(0xFFFFE066),
+    const Color(0xFFFF6584),
+    const Color(0xFF43D98C),
+    const Color(0xFF0ED2F7),
+  ];
 
   Future<Uint8List?> _captureCanvas() async {
     try {
@@ -57,20 +61,12 @@ class _EditorScreenState extends State<EditorScreen> {
     try {
       final Uint8List? image = await _captureCanvas();
       if (image == null) return;
-
-      final dir = await getTemporaryDirectory();
-      final file = File(
-        '${dir.path}/status_${DateTime.now().millisecondsSinceEpoch}.png',
-      );
-      await file.writeAsBytes(image);
-
       await SaverGallery.saveImage(
         image,
         name: 'status_${DateTime.now().millisecondsSinceEpoch}',
         androidRelativePath: 'Pictures/StatusHub',
         androidExistNotSave: true,
       );
-
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -98,11 +94,9 @@ class _EditorScreenState extends State<EditorScreen> {
     try {
       final Uint8List? image = await _captureCanvas();
       if (image == null) return;
-
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/status_share.png');
       await file.writeAsBytes(image);
-
       await Share.shareXFiles([
         XFile(file.path),
       ], text: 'Made with Status Hub 🔥');
@@ -116,14 +110,18 @@ class _EditorScreenState extends State<EditorScreen> {
   }
 
   @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: _buildAppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [_buildCanvas(), _buildToolbar(), _buildBottomActions()],
-        ),
+      body: Column(
+        children: [_buildCanvas(), _buildToolbar(), _buildBottomActions()],
       ),
     );
   }
@@ -141,7 +139,7 @@ class _EditorScreenState extends State<EditorScreen> {
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(
-        'Edit Status',
+        'Create Status',
         style: GoogleFonts.poppins(
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -149,14 +147,18 @@ class _EditorScreenState extends State<EditorScreen> {
         ),
       ),
       actions: [
-        TextButton.icon(
-          onPressed: () => context.read<EditorProvider>().reset(),
-          icon: const Icon(
-            Icons.refresh,
-            size: 16,
-            color: AppColors.textSecondary,
-          ),
-          label: Text(
+        TextButton(
+          onPressed: () => setState(() {
+            _textController.text = 'Your vibe here ✨';
+            _selectedFont = 'Poppins';
+            _fontSize = 24.0;
+            _textColor = Colors.white;
+            _gradientColors = AppColors.purpleGradient;
+            _isBold = false;
+            _isItalic = false;
+            _textAlign = TextAlign.center;
+          }),
+          child: Text(
             'Reset',
             style: GoogleFonts.poppins(
               color: AppColors.textSecondary,
@@ -169,64 +171,58 @@ class _EditorScreenState extends State<EditorScreen> {
   }
 
   Widget _buildCanvas() {
-    return Consumer<EditorProvider>(
-      builder: (context, provider, _) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-          child: RepaintBoundary(
-            key: _canvasKey,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    colors: provider.gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: provider.gradientColors.first.withOpacity(0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: RepaintBoundary(
+        key: _canvasKey,
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                colors: _gradientColors,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _gradientColors.first.withOpacity(0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      provider.editedText,
-                      textAlign: provider.textAlign,
-                      style: GoogleFonts.getFont(
-                        provider.selectedFont,
-                        fontSize: provider.fontSize,
-                        color: provider.textColor,
-                        fontWeight: provider.isBold
-                            ? FontWeight.bold
-                            : FontWeight.w600,
-                        fontStyle: provider.isItalic
-                            ? FontStyle.italic
-                            : FontStyle.normal,
-                        height: 1.5,
-                      ),
-                    ),
+              ],
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  _textController.text.isEmpty
+                      ? 'Start typing...'
+                      : _textController.text,
+                  textAlign: _textAlign,
+                  style: GoogleFonts.getFont(
+                    _selectedFont,
+                    fontSize: _fontSize,
+                    color: _textColor,
+                    fontWeight: _isBold ? FontWeight.bold : FontWeight.w600,
+                    fontStyle: _isItalic ? FontStyle.italic : FontStyle.normal,
+                    height: 1.5,
                   ),
                 ),
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
   Widget _buildToolbar() {
-    return Consumer<EditorProvider>(
-      builder: (context, provider, _) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+    return Expanded(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppColors.surface,
@@ -242,14 +238,14 @@ class _EditorScreenState extends State<EditorScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text editing row
+              // Text input + format buttons
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: _textController,
-                      maxLines: 2,
-                      onChanged: provider.updateText,
+                      maxLines: 3,
+                      onChanged: (_) => setState(() {}),
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         color: AppColors.textPrimary,
@@ -280,19 +276,18 @@ class _EditorScreenState extends State<EditorScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Bold / Italic / Align
                   Column(
                     children: [
                       _toolBtn(
                         icon: Icons.format_bold,
-                        active: provider.isBold,
-                        onTap: provider.toggleBold,
+                        active: _isBold,
+                        onTap: () => setState(() => _isBold = !_isBold),
                       ),
                       const SizedBox(height: 4),
                       _toolBtn(
                         icon: Icons.format_italic,
-                        active: provider.isItalic,
-                        onTap: provider.toggleItalic,
+                        active: _isItalic,
+                        onTap: () => setState(() => _isItalic = !_isItalic),
                       ),
                     ],
                   ),
@@ -301,22 +296,24 @@ class _EditorScreenState extends State<EditorScreen> {
                     children: [
                       _toolBtn(
                         icon: Icons.format_align_center,
-                        active: provider.textAlign == TextAlign.center,
-                        onTap: () => provider.updateTextAlign(TextAlign.center),
+                        active: _textAlign == TextAlign.center,
+                        onTap: () =>
+                            setState(() => _textAlign = TextAlign.center),
                       ),
                       const SizedBox(height: 4),
                       _toolBtn(
                         icon: Icons.format_align_left,
-                        active: provider.textAlign == TextAlign.left,
-                        onTap: () => provider.updateTextAlign(TextAlign.left),
+                        active: _textAlign == TextAlign.left,
+                        onTap: () =>
+                            setState(() => _textAlign = TextAlign.left),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
 
-              // Font size slider
+              // Font size
               Row(
                 children: [
                   const Icon(
@@ -338,15 +335,15 @@ class _EditorScreenState extends State<EditorScreen> {
                         overlayShape: SliderComponentShape.noOverlay,
                       ),
                       child: Slider(
-                        value: provider.fontSize,
+                        value: _fontSize,
                         min: 12,
                         max: 48,
-                        onChanged: provider.updateFontSize,
+                        onChanged: (v) => setState(() => _fontSize = v),
                       ),
                     ),
                   ),
                   Text(
-                    '${provider.fontSize.toInt()}px',
+                    '${_fontSize.toInt()}px',
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       color: AppColors.textSecondary,
@@ -354,9 +351,11 @@ class _EditorScreenState extends State<EditorScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
               // Font picker
+              _sectionLabel('Font'),
+              const SizedBox(height: 6),
               SizedBox(
                 height: 34,
                 child: ListView.builder(
@@ -364,9 +363,9 @@ class _EditorScreenState extends State<EditorScreen> {
                   itemCount: AppFonts.statusFonts.length,
                   itemBuilder: (context, index) {
                     final font = AppFonts.statusFonts[index];
-                    final isSelected = provider.selectedFont == font;
+                    final isSelected = _selectedFont == font;
                     return GestureDetector(
-                      onTap: () => provider.updateFont(font),
+                      onTap: () => setState(() => _selectedFont = font),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         margin: const EdgeInsets.only(right: 8),
@@ -396,9 +395,11 @@ class _EditorScreenState extends State<EditorScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
               // Gradient picker
+              _sectionLabel('Background'),
+              const SizedBox(height: 6),
               SizedBox(
                 height: 34,
                 child: ListView.builder(
@@ -406,10 +407,9 @@ class _EditorScreenState extends State<EditorScreen> {
                   itemCount: AppColors.allGradients.length,
                   itemBuilder: (context, index) {
                     final gradient = AppColors.allGradients[index];
-                    final isSelected =
-                        provider.gradientColors[0] == gradient[0];
+                    final isSelected = _gradientColors.first == gradient.first;
                     return GestureDetector(
-                      onTap: () => provider.updateGradient(gradient),
+                      onTap: () => setState(() => _gradientColors = gradient),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         margin: const EdgeInsets.only(right: 8),
@@ -437,54 +437,52 @@ class _EditorScreenState extends State<EditorScreen> {
                   },
                 ),
               ),
+              const SizedBox(height: 12),
 
               // Text color picker
-              const SizedBox(height: 8),
+              _sectionLabel('Text Color'),
+              const SizedBox(height: 6),
               Row(
-                children: [
-                  Text(
-                    'Text:',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  ...[
-                    Colors.white,
-                    Colors.black,
-                    const Color(0xFFFFE066),
-                    const Color(0xFFFF6584),
-                    const Color(0xFF43D98C),
-                  ].map(
-                    (color) => GestureDetector(
-                      onTap: () => provider.updateTextColor(color),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.only(right: 8),
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: provider.textColor == color
-                                ? AppColors.primary
-                                : Colors.grey.shade300,
-                            width: 2,
+                children: _textColors
+                    .map(
+                      (color) => GestureDetector(
+                        onTap: () => setState(() => _textColor = color),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.only(right: 10),
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: _textColor == color
+                                  ? AppColors.primary
+                                  : Colors.grey.shade300,
+                              width: 2,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                    )
+                    .toList(),
               ),
+              const SizedBox(height: 8),
             ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+
+  Widget _sectionLabel(String label) => Text(
+    label,
+    style: GoogleFonts.poppins(
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      color: AppColors.textSecondary,
+    ),
+  );
 
   Widget _toolBtn({
     required IconData icon,

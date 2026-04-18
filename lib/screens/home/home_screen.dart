@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:status_hub/screens/editor/create_screen.dart';
+import 'package:status_hub/screens/favorites/favorites_screen.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/dummy_templates.dart';
 import '../../providers/template_provider.dart';
@@ -19,7 +21,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
+            _buildHeader(context),
             _buildLanguageFilter(),
             _buildCategoryFilter(),
             _buildGrid(),
@@ -30,7 +32,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
@@ -70,7 +72,12 @@ class HomeScreen extends StatelessWidget {
             ),
             child: IconButton(
               icon: const Icon(Icons.favorite, color: AppColors.accent),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                );
+              },
             ),
           ),
         ],
@@ -95,7 +102,10 @@ class HomeScreen extends StatelessWidget {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.primary : AppColors.surface,
                     borderRadius: BorderRadius.circular(20),
@@ -114,7 +124,9 @@ class HomeScreen extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.white : AppColors.textSecondary,
+                      color: isSelected
+                          ? Colors.white
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ),
@@ -143,12 +155,19 @@ class HomeScreen extends StatelessWidget {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.textPrimary : Colors.transparent,
+                    color: isSelected
+                        ? AppColors.textPrimary
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isSelected ? AppColors.textPrimary : AppColors.textHint,
+                      color: isSelected
+                          ? AppColors.textPrimary
+                          : AppColors.textHint,
                     ),
                   ),
                   child: Text(
@@ -156,7 +175,9 @@ class HomeScreen extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: isSelected ? Colors.white : AppColors.textSecondary,
+                      color: isSelected
+                          ? Colors.white
+                          : AppColors.textSecondary,
                     ),
                   ),
                 ),
@@ -178,7 +199,11 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.search_off, size: 48, color: AppColors.textHint),
+                  const Icon(
+                    Icons.search_off,
+                    size: 48,
+                    color: AppColors.textHint,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     'No templates found',
@@ -206,9 +231,7 @@ class HomeScreen extends StatelessWidget {
                   context.read<EditorProvider>().loadTemplate(template);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => const EditorScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const EditorScreen()),
                   );
                 },
               );
@@ -222,7 +245,10 @@ class HomeScreen extends StatelessWidget {
   Widget _buildFAB(BuildContext context) {
     return FloatingActionButton.extended(
       onPressed: () {
-        // Create from scratch
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CreateScreen()),
+        );
       },
       backgroundColor: AppColors.primary,
       icon: const Icon(Icons.add, color: Colors.white),
