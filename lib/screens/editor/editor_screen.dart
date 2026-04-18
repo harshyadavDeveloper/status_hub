@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:status_hub/widgets/giphy_picker_sheet.dart';
 import 'dart:io';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_fonts.dart';
@@ -177,48 +179,132 @@ class _EditorScreenState extends State<EditorScreen> {
             key: _canvasKey,
             child: AspectRatio(
               aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    colors: provider.gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: provider.gradientColors.first.withOpacity(0.4),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final size = Size(
+                    constraints.maxWidth,
+                    constraints.maxHeight,
+                  );
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(
+                        colors: provider.gradientColors,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: provider.gradientColors.first.withOpacity(0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      provider.editedText,
-                      textAlign: provider.textAlign,
-                      style: GoogleFonts.getFont(
-                        provider.selectedFont,
-                        fontSize: provider.fontSize,
-                        color: provider.textColor,
-                        fontWeight: provider.isBold
-                            ? FontWeight.bold
-                            : FontWeight.w600,
-                        fontStyle: provider.isItalic
-                            ? FontStyle.italic
-                            : FontStyle.normal,
-                        height: 1.5,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Stack(
+                        children: [
+                          // Text layer
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Text(
+                                provider.editedText,
+                                textAlign: provider.textAlign,
+                                style: GoogleFonts.getFont(
+                                  provider.selectedFont,
+                                  fontSize: provider.fontSize,
+                                  color: provider.textColor,
+                                  fontWeight: provider.isBold
+                                      ? FontWeight.bold
+                                      : FontWeight.w600,
+                                  fontStyle: provider.isItalic
+                                      ? FontStyle.italic
+                                      : FontStyle.normal,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Sticker layers
+                          ...List.generate(provider.stickers.length, (index) {
+                            final sticker = provider.stickers[index];
+                            final offset = provider.stickerOffsets[index];
+                            return Positioned(
+                              left: offset.dx,
+                              top: offset.dy,
+                              child: GestureDetector(
+                                onPanUpdate: (details) {
+                                  final newOffset = Offset(
+                                    (offset.dx + details.delta.dx).clamp(
+                                      0,
+                                      size.width - 80,
+                                    ),
+                                    (offset.dy + details.delta.dy).clamp(
+                                      0,
+                                      size.height - 80,
+                                    ),
+                                  );
+                                  provider.updateStickerOffset(
+                                    index,
+                                    newOffset,
+                                  );
+                                },
+                                onLongPress: () => _confirmRemoveSticker(index),
+                                child: SizedBox(
+                                  width: 80,
+                                  height: 80,
+                                  child: CachedNetworkImage(
+                                    imageUrl: sticker.originalUrl,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  void _confirmRemoveSticker(int index) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Remove sticker?',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<EditorProvider>().removeSticker(index);
+              Navigator.pop(context);
+            },
+            child: Text(
+              'Remove',
+              style: GoogleFonts.poppins(color: AppColors.accent),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -435,6 +521,48 @@ class _EditorScreenState extends State<EditorScreen> {
                       ),
                     );
                   },
+                ),
+              ),
+              const SizedBox(height: 10),
+              GestureDetector(
+                onTap: () {
+                  final provider = context.read<EditorProvider>();
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => GiphyPickerSheet(
+                      onSelected: (sticker) {
+                        final box =
+                            _canvasKey.currentContext?.findRenderObject()
+                                as RenderBox?;
+                        final size = box?.size ?? const Size(300, 300);
+                        provider.addSticker(sticker, size);
+                      },
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceGrey,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('😄', style: TextStyle(fontSize: 18)),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Add Sticker',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
