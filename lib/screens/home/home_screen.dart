@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:status_hub/data/remote_config_service.dart';
 import 'package:status_hub/main.dart';
+import 'package:status_hub/widgets/festival_banner.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/dummy_templates.dart';
 import '../../providers/template_provider.dart';
@@ -36,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildHeader(context),
             _buildLanguageFilter(),
             _buildCategoryFilter(),
+            _buildFestivalBanner(), 
             _buildTrendingSection(),
             _buildGrid(),
           ],
@@ -386,6 +388,15 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildFestivalBanner() {
+    return Consumer<TemplateProvider>(
+      builder: (context, provider, _) {
+        if (!provider.trendingLoaded) return const SizedBox.shrink();
+        return const FestivalBanner();
+      },
     );
   }
 }
