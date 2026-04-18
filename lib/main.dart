@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:status_hub/data/remote_config_service.dart';
@@ -11,17 +12,15 @@ import 'screens/favorites/favorites_screen.dart';
 import 'screens/editor/create_screen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp();
-    print("✅ Firebase Connected");
-  } catch (e) {
-    print("❌ Firebase Error: $e");
-  }
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  await Firebase.initializeApp();
   await RemoteConfigService.initialize();
+
+  FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
