@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:status_hub/data/remote_config_service.dart';
 import 'package:status_hub/main.dart';
+import 'package:status_hub/widgets/ad_banner_placeholder.dart';
 import 'package:status_hub/widgets/festival_banner.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/dummy_templates.dart';
@@ -56,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildHeader(context),
             _buildLanguageFilter(),
+            const AdBannerPlaceholder(),
             _buildCategoryFilter(),
             _buildFestivalBanner(),
             _buildTrendingSection(),
