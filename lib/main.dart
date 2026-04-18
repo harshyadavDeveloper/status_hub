@@ -55,8 +55,8 @@ class MainShell extends StatefulWidget {
 class MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  late final List<Widget> _screens = [
-    HomeScreen(onTabChange: switchTab),
+  late final List<Widget> _screens = const [
+    HomeScreen(),
     FavoritesScreen(),
     CreateScreen(),
   ];
@@ -78,7 +78,7 @@ class MainShellState extends State<MainShell> {
         color: AppColors.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha:0.08),
             blurRadius: 20,
             offset: const Offset(0, -4),
           ),
@@ -114,7 +114,7 @@ class MainShellState extends State<MainShell> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary.withOpacity(0.1)
+              ? AppColors.primary.withValues(alpha:0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
@@ -162,7 +162,7 @@ class MainShellState extends State<MainShell> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.35),
+                    color: AppColors.primary.withValues(alpha:0.35),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

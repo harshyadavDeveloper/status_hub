@@ -37,13 +37,13 @@ class FestivalBanner extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           gradient: LinearGradient(
-            colors: [event.color, event.color.withOpacity(0.7)],
+            colors: [event.color, event.color.withValues(alpha:0.7)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: event.color.withOpacity(0.4),
+              color: event.color.withValues(alpha:0.4),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -74,7 +74,7 @@ class FestivalBanner extends StatelessWidget {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.25),
+                            color: Colors.white.withValues(alpha:0.25),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -146,10 +146,10 @@ class FestivalBanner extends StatelessWidget {
               margin: const EdgeInsets.only(right: 10),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: event.color.withOpacity(0.1),
+                color: event.color.withValues(alpha:0.1),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: event.color.withOpacity(0.3),
+                  color: event.color.withValues(alpha:0.3),
                   width: 1.5,
                 ),
               ),

@@ -4,7 +4,7 @@ import '../data/dummy_templates.dart';
 import '../data/remote_config_service.dart';
 
 class TemplateProvider extends ChangeNotifier {
-  List<TemplateModel> _allTemplates = List.from(dummyTemplates);
+  final List<TemplateModel> _allTemplates = List.from(dummyTemplates);
   List<TrendingSection> _trendingSections = [];
   String _selectedCategory = 'All';
   String _selectedLanguage = 'All';

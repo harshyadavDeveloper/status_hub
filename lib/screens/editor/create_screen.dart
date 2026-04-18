@@ -180,7 +180,7 @@ class _CreateScreenState extends State<CreateScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: _gradientColors.first.withOpacity(0.4),
+                  color: _gradientColors.first.withValues(alpha:0.4),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -222,7 +222,7 @@ class _CreateScreenState extends State<CreateScreen> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha:0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -419,7 +419,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: gradient.first.withOpacity(0.4),
+                              color: gradient.first.withValues(alpha:0.4),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
@@ -556,7 +556,7 @@ class _CreateScreenState extends State<CreateScreen> {
                 backgroundColor: AppColors.primary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 4,
-                shadowColor: AppColors.primary.withOpacity(0.4),
+                shadowColor: AppColors.primary.withValues(alpha:0.4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

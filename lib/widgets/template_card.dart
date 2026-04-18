@@ -34,7 +34,7 @@ class TemplateCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: colors.first.withOpacity(0.35),
+              color: colors.first.withValues(alpha:0.35),
               blurRadius: 12,
               offset: const Offset(0, 6),
             ),
@@ -68,7 +68,7 @@ class TemplateCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha:0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -90,7 +90,7 @@ class TemplateCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha:0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

@@ -28,11 +28,12 @@ class _GiphyPickerSheetState extends State<GiphyPickerSheet> {
   Future<void> _loadTrending() async {
     setState(() => _isLoading = true);
     final stickers = await GiphyService.fetchTrending();
-    if (mounted)
+    if (mounted) {
       setState(() {
         _stickers = stickers;
         _isLoading = false;
       });
+    }
   }
 
   Future<void> _search(String query) async {
@@ -42,11 +43,12 @@ class _GiphyPickerSheetState extends State<GiphyPickerSheet> {
     }
     setState(() => _isSearching = true);
     final stickers = await GiphyService.searchStickers(query);
-    if (mounted)
+    if (mounted) {
       setState(() {
         _stickers = stickers;
         _isSearching = false;
       });
+    }
   }
 
   @override

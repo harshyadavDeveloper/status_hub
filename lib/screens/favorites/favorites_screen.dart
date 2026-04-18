@@ -37,7 +37,7 @@ class FavoritesScreen extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.surfaceGrey,
                       shape: BoxShape.circle,
                     ),
