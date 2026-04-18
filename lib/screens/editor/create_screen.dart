@@ -130,14 +130,7 @@ class _CreateScreenState extends State<CreateScreen> {
     return AppBar(
       backgroundColor: AppColors.background,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios,
-          color: AppColors.textPrimary,
-          size: 20,
-        ),
-        onPressed: () => Navigator.pop(context),
-      ),
+      
       title: Text(
         'Create Status',
         style: GoogleFonts.poppins(

@@ -12,7 +12,7 @@ import 'screens/editor/create_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
- try {
+  try {
     await Firebase.initializeApp();
     print("✅ Firebase Connected");
   } catch (e) {
@@ -49,14 +49,14 @@ class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
   @override
-  State<MainShell> createState() => _MainShellState();
+  State<MainShell> createState() => MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
+  late final List<Widget> _screens = [
+    HomeScreen(onTabChange: switchTab),
     FavoritesScreen(),
     CreateScreen(),
   ];

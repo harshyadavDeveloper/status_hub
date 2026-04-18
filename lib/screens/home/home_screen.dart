@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:status_hub/data/remote_config_service.dart';
-import 'package:status_hub/screens/favorites/favorites_screen.dart';
+import 'package:status_hub/main.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/dummy_templates.dart';
 import '../../providers/template_provider.dart';
@@ -11,19 +11,20 @@ import '../../widgets/template_card.dart';
 import '../editor/editor_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Function(int) onTabChange;
+  const HomeScreen({super.key, required this.onTabChange});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-   @override
+  @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        context.read<TemplateProvider>().loadTrending());
+    Future.microtask(() => context.read<TemplateProvider>().loadTrending());
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +36,11 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildHeader(context),
             _buildLanguageFilter(),
             _buildCategoryFilter(),
-            _buildTrendingSection(), 
+            _buildTrendingSection(),
             _buildGrid(),
           ],
         ),
       ),
-      // floatingActionButton: _buildFAB(context),
     );
   }
 
@@ -85,10 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: IconButton(
               icon: const Icon(Icons.favorite, color: AppColors.accent),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-                );
+                context.findAncestorStateOfType<MainShellState>()?.switchTab(1);
               },
             ),
           ),
@@ -202,139 +199,142 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTrendingSection() {
-  return Consumer<TemplateProvider>(
-    builder: (context, provider, _) {
-      if (!provider.trendingLoaded || provider.trendingSections.isEmpty) {
-        return const SizedBox.shrink();
-      }
+    return Consumer<TemplateProvider>(
+      builder: (context, provider, _) {
+        if (!provider.trendingLoaded || provider.trendingSections.isEmpty) {
+          return const SizedBox.shrink();
+        }
 
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-            child: Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(2),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+              child: Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Trending Now',
-                  style: GoogleFonts.poppins(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                  const SizedBox(width: 8),
+                  Text(
+                    'Trending Now',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: 160,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: provider.trendingSections.length,
-              itemBuilder: (context, sectionIndex) {
-                final section = provider.trendingSections[sectionIndex];
-                return _buildTrendingCard(context, section);
-              },
+            SizedBox(
+              height: 160,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: provider.trendingSections.length,
+                itemBuilder: (context, sectionIndex) {
+                  final section = provider.trendingSections[sectionIndex];
+                  return _buildTrendingCard(context, section);
+                },
+              ),
             ),
+            const SizedBox(height: 8),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTrendingCard(BuildContext context, TrendingSection section) {
+    if (section.templates.isEmpty) return const SizedBox.shrink();
+    final template = section.templates.first;
+
+    Color hexToColor(String hex) =>
+        Color(int.parse('FF${hex.replaceAll('#', '')}', radix: 16));
+
+    final colors = template.gradientColors.map(hexToColor).toList();
+
+    return GestureDetector(
+      onTap: () {
+        context.read<EditorProvider>().loadTemplate(template);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EditorScreen()),
+        );
+      },
+      child: Container(
+        width: 140,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          const SizedBox(height: 8),
-        ],
-      );
-    },
-  );
-}
-
-Widget _buildTrendingCard(BuildContext context, TrendingSection section) {
-  if (section.templates.isEmpty) return const SizedBox.shrink();
-  final template = section.templates.first;
-
-  Color hexToColor(String hex) =>
-      Color(int.parse('FF${hex.replaceAll('#', '')}', radix: 16));
-
-  final colors = template.gradientColors.map(hexToColor).toList();
-
-  return GestureDetector(
-    onTap: () {
-      context.read<EditorProvider>().loadTemplate(template);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const EditorScreen()),
-      );
-    },
-    child: Container(
-      width: 140,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          colors: colors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          boxShadow: [
+            BoxShadow(
+              color: colors.first.withOpacity(0.35),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.first.withOpacity(0.35),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                template.text,
-                textAlign: TextAlign.center,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.poppins(
-                  fontSize: 11,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 8,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+        child: Stack(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
                 child: Text(
-                  section.title,
-                  style: const TextStyle(
+                  template.text,
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 11,
                     color: Colors.white,
-                    fontSize: 9,
                     fontWeight: FontWeight.w600,
+                    height: 1.4,
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 8,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    section.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildGrid() {
     return Expanded(
