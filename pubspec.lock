@@ -409,6 +409,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  fl_pretty_charts:
+    dependency: "direct main"
+    description:
+      name: fl_pretty_charts
+      sha256: "556a534c9069bc5861909760e969bf7c761c365813af9c301a7f32a47078e885"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2"
   flutter:
     dependency: "direct main"
     description: flutter

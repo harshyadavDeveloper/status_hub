@@ -67,6 +67,7 @@ dependencies:
   rename_app: ^1.6.5
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
+  fl_pretty_charts: ^0.1.2
 
 dev_dependencies:
   flutter_test:

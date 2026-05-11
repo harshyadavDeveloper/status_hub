@@ -195,7 +195,9 @@ class _EditorScreenState extends State<EditorScreen> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: provider.gradientColors.first.withValues(alpha:0.4),
+                          color: provider.gradientColors.first.withValues(
+                            alpha: 0.4,
+                          ),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -319,7 +321,7 @@ class _EditorScreenState extends State<EditorScreen> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha:0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -512,7 +514,7 @@ class _EditorScreenState extends State<EditorScreen> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: gradient.first.withValues(alpha:0.4),
+                              color: gradient.first.withValues(alpha: 0.4),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),
@@ -693,7 +695,7 @@ class _EditorScreenState extends State<EditorScreen> {
                 backgroundColor: AppColors.primary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 4,
-                shadowColor: AppColors.primary.withValues(alpha:0.4),
+                shadowColor: AppColors.primary.withValues(alpha: 0.4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
